@@ -1,0 +1,8 @@
+tensorflow
+python-multipart
+Keras>=2.4.3
+numpy>=1.19.5
+opencv-python>=4.1.2.30
+pandas>=1.2.4
+scikit-image>=0.18.1
+scipy>=1.6.2

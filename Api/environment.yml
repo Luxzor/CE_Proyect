@@ -1,0 +1,18 @@
+name: comet310
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - tensorflow=2.10.1
+  - numpy=1.23.*
+  - pandas=1.5.*
+  - scipy=1.10.*
+  - scikit-image=0.19.*
+  - h5py=3.8.*
+  - opencv=4.7.*         # (en conda se llama 'opencv', no 'opencv-python')
+  - pip
+  - pip:
+      - fastapi==0.110.0
+      - uvicorn[standard]==0.27.1
+      - python-multipart==0.0.9
+# Intencionalmente NO ponemos 'keras' (usaremos tf.keras)
