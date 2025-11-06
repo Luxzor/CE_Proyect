@@ -1,8 +1,22 @@
+from pathlib import Path
+import os
+
 from fastapi import FastAPI, UploadFile, File, Query
-from fastapi.responses import StreamingResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import (
+    StreamingResponse,
+    JSONResponse,
+    PlainTextResponse,
+    FileResponse,
+)
 from fastapi.middleware.cors import CORSMiddleware
-import numpy as np, cv2, io, os
+import numpy as np, cv2, io
+
 from .inference import run_inference, list_models, save_mask, load_unet
+
+HERE = Path(__file__).resolve().parent
+BASE_DIR = Path(os.getenv("BASE_DIR", HERE.parent))
+WEB_DIR = Path(os.getenv("WEB_DIR", BASE_DIR / "web"))
+INDEX_FILE = WEB_DIR / "index.html"
 
 app = FastAPI(title="Comet Assay API")
 
@@ -15,8 +29,21 @@ app.add_middleware(
 
 @app.on_event("startup")
 def _warm():
-    # precarga el modelo por defecto
-    load_unet(None)
+    # precarga el modelo por defecto si está disponible
+    try:
+        load_unet(None)
+    except FileNotFoundError as exc:
+        print(f"[startup] Advertencia: {exc}")
+
+
+@app.get("/")
+def index():
+    if INDEX_FILE.is_file():
+        return FileResponse(INDEX_FILE)
+    return PlainTextResponse(
+        "Frontend no disponible. Copia los archivos estáticos en 'web/'.",
+        status_code=503,
+    )
 
 @app.get("/health", response_class=PlainTextResponse)
 def health():
@@ -37,8 +64,10 @@ async def segment(
     if img is None:
         return JSONResponse({"error": "Imagen inválida"}, status_code=400)
 
+    model_name = model or None
+
     try:
-        mask = run_inference(img, model_name=model)
+        mask = run_inference(img, model_name=model_name)
     except FileNotFoundError as e:
         return JSONResponse({"error": str(e)}, status_code=404)
 
