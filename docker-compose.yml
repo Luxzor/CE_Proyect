@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  comet-assay:
+    build: .
+    image: comet-assay-api
+    ports:
+      - "8000:8000"
+    environment:
+      - UVICORN_HOST=0.0.0.0
+      - UVICORN_PORT=8000
+    volumes:
+      - ./Comets_Output:/app/Comets_Output
+      - ./Input:/app/Input
+      - ./Model:/app/Model:ro
+      - ./web:/app/web:ro
+    restart: unless-stopped
