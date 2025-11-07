@@ -2,7 +2,8 @@ fastapi>=0.110,<0.112
 uvicorn[standard]>=0.27,<0.29
 python-multipart>=0.0.9
 tensorflow>=2.10,<2.11
-numpy>=1.19.5
+# TensorFlow 2.10 wheels are built against NumPy 1.x; pin to a compatible release
+numpy>=1.23,<1.24
 opencv-python>=4.7
 pandas>=1.2.4
 scikit-image>=0.19
